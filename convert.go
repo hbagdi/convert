@@ -12,16 +12,13 @@ const (
 	tagName = "convert"
 )
 
-var (
-	converters = map[reflect.Type]map[reflect.Type]Fn{}
-)
+var converters = map[reflect.Type]map[reflect.Type]Fn{}
 
 // Register registers a callback fn which is called whenever a conversion
 // has to happen from type 'from' to type 'to'.
 func Register(from, to reflect.Type, fn Fn) {
-	c, ok := converters[from]
-	if !ok {
-		c = map[reflect.Type]Fn{}
+	if _, ok := converters[from]; !ok {
+		c := map[reflect.Type]Fn{}
 		converters[from] = c
 	}
 
@@ -84,7 +81,7 @@ func indirect(reflectValue reflect.Value) reflect.Value {
 }
 
 func indirectType(reflectType reflect.Type) reflect.Type {
-	for reflectType.Kind() == reflect.Ptr || reflectType.Kind() == reflect.Slice {
+	for reflectType.Kind() == reflect.Ptr {
 		reflectType = reflectType.Elem()
 	}
 	return reflectType
@@ -95,7 +92,7 @@ func set(to, from reflect.Value) error {
 		return nil
 	}
 	if to.Kind() == reflect.Ptr {
-		//set `to` to nil if from is nil
+		// set `to` to nil if from is nil
 		if from.Kind() == reflect.Ptr && from.IsNil() {
 			to.Set(reflect.Zero(to.Type()))
 			return nil

@@ -56,9 +56,7 @@ type T10 struct {
 	TimeUnix int64 `convert:"Time"`
 }
 
-var (
-	t1 = time.Date(2020, 11, 7, 0, 0, 0, 0, time.UTC)
-)
+var t1 = time.Date(2020, 11, 7, 0, 0, 0, 0, time.UTC)
 
 func TestRegisterConverter(t *testing.T) {
 	type args struct {
