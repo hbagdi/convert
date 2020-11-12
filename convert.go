@@ -39,8 +39,38 @@ func Convert(from, to interface{}) error {
 	}
 
 	fromType := indirectType(reflect.TypeOf(from))
-	fields := getFields(fromType)
+	toType := indirectType(reflect.TypeOf(to))
+	if fromType.Kind() == reflect.Slice {
+		if toType.Kind() != reflect.Slice {
+			return errors.New("cannot copy slice to a non-slice")
+		}
+		length := fromValue.Len()
+		for i := 0; i < length; i++ {
+			fromElem := indirect(fromValue.Index(i))
+			toElem := indirect(reflect.New(indirectType(toType.Elem())))
 
+			fields := getFields(fromElem.Type())
+			err := setElem(fields, fromElem, toElem)
+			if err != nil {
+				return err
+			}
+			if toElem.Addr().Type().AssignableTo(toValue.Type().Elem()) {
+				toValue.Set(reflect.Append(toValue, toElem.Addr()))
+			} else if toElem.Type().AssignableTo(toValue.Type().Elem()) {
+				toValue.Set(reflect.Append(toValue, toElem))
+			}
+		}
+	} else {
+		fields := getFields(fromType)
+		err := setElem(fields, fromValue, toValue)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func setElem(fields []reflect.StructField, fromValue, toValue reflect.Value) error {
 	for _, field := range fields {
 		tag := field.Tag.Get(tagName)
 		name := field.Name

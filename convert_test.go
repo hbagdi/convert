@@ -138,6 +138,48 @@ func TestConvert(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "simple array",
+			args: args{
+				from: []T1{
+					{
+						String: "t1-id",
+						Int:    42,
+						Bool:   true,
+					},
+				},
+				to: &[]T2{},
+			},
+			want: &[]T2{
+				{
+					String: "t1-id",
+					Int:    42,
+					Bool:   true,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "slice to slice of pointers",
+			args: args{
+				from: []T1{
+					{
+						String: "t1-id",
+						Int:    42,
+						Bool:   true,
+					},
+				},
+				to: &[]*T2{},
+			},
+			want: &[]*T2{
+				{
+					String: "t1-id",
+					Int:    42,
+					Bool:   true,
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "errors out on non-pointer receiver",
 			args: args{
 				from: T1{String: "t1-id", Int: 42, Bool: true},
