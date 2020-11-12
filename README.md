@@ -85,6 +85,11 @@ func main() {
  	// To struct: {ID:some-id CreationTime:1893456000 Total:42}
 }
 ```
+
+## Changelog
+
+Please read the [CHANGELOG.md](CHANGELOG.md) file.
+
 ## Acknowledgement
 
 This package borrows code from [github.com/jinzhu/copier](https://github.com/jinzhu/copier).
